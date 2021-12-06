@@ -14,9 +14,43 @@ package frc.robot;
  */
 public final class Constants {
     public static class DriveConstants {
-        public static final int kFrontLeft = 3;
-        public static final int kFrontRight = 1;
-        public static final int kRearLeft = 2;
-        public static final int kRearRight = 0;
+        public static final int kLeftMaster = 3;
+        public static final int kRightMaster = 1;
+        public static final int kLeftSlave = 2;
+        public static final int kRightSlave = 0;
+
+        public static final double kWheelDiameterMeters = 0.1524;
+    }
+
+    public final static class ControllerConstants {
+        public static final int CONTROLLER_PORT = 0; // Controller port
+
+        // Sticks
+        public static final int S_RIGHT_X_PORT = 4; // Right stick x
+        public static final int S_RIGHT_Y_PORT = 5; // Right stick y
+        public static final int S_LEFT_X_PORT = 0; // Left stick x
+        public static final int S_LEFT_Y_PORT = 1; // Left stick y
+
+        public static final int S_LEFT = 9; // Left stick button
+        public static final int S_RIGHT = 10; // Right stick button
+
+        // Triggers
+        public static final int TRIGGER_RIGHT_PORT = 3; // Right trigger
+        public static final int TRIGGER_LEFT_PORT = 2; // Left trigger
+
+        // Bumpers
+        public static final int BUMPER_RIGHT_PORT = 6; // Right bumper
+        public static final int BUMPER_LEFT_PORT = 5; // Left bumper
+
+        // Buttons
+        public static final int BUTTON_A_PORT = 1; // A Button
+        public static final int BUTTON_B_PORT = 2; // B Button
+        public static final int BUTTON_X_PORT = 3; // X Button
+        public static final int BUTTON_Y_PORT = 4; // Y Button
+
+        // Special buttons
+        public static final int BUTTON_MENU_PORT = 8; // Menu Button
+        public static final int BUTTON_START_PORT = 7; // Start button
+
     }
 }
