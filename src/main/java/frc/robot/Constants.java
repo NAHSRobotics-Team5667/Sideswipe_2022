@@ -14,12 +14,13 @@ package frc.robot;
  */
 public final class Constants {
     public static class DriveConstants {
-        public static final int kLeftMaster = 3;
-        public static final int kRightMaster = 1;
-        public static final int kLeftSlave = 2;
-        public static final int kRightSlave = 0;
+        public static final int kFrontLeftId = 3;
+        public static final int kFrontRightId = 1;
+        public static final int kBackLeftId = 2;
+        public static final int kBackRightId = 0;
 
         public static final double kWheelDiameterMeters = 0.1524;
+        public static final double kGearRatio = 10.75;
     }
 
     public final static class ControllerConstants {
@@ -51,6 +52,5 @@ public final class Constants {
         // Special buttons
         public static final int BUTTON_MENU_PORT = 8; // Menu Button
         public static final int BUTTON_START_PORT = 7; // Start button
-
     }
 }

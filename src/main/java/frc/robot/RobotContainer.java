@@ -10,6 +10,7 @@ import frc.robot.commands.DrivetrainCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.utils.Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -21,10 +22,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  public static Controller controller = new Controller(0);
 
   // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   private Drivetrain m_drive;
-  private DrivetrainCommand m_driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -32,6 +33,8 @@ public class RobotContainer {
     m_drive = new Drivetrain();
 
     configureButtonBindings();
+    
+    m_drive.setDefaultCommand(new DrivetrainCommand(m_drive));
   }
 
   /**
@@ -41,6 +44,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {}
+
+  public static Controller getController() {
+    return controller;
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

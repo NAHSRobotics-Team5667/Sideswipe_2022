@@ -4,57 +4,90 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
-  private WPI_TalonFX m_leftMaster, m_rightMaster, m_leftSlave, m_rightSlave;
+  private WPI_TalonFX m_frontLeft, m_frontRight, m_backLeft, m_backRight;
   private AHRS m_gyro;
 
+  private DifferentialDriveOdometry m_odometry;
+
+  Supplier<Pose2d> m_robotPose;
+
   private DifferentialDrive m_drive;
-  private SpeedControllerGroup m_leftDrive, m_rightDrive;
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    m_leftMaster = new WPI_TalonFX(DriveConstants.kLeftMaster);
-    m_rightMaster = new WPI_TalonFX(DriveConstants.kRightMaster);
-    m_leftSlave = new WPI_TalonFX(DriveConstants.kLeftSlave);
-    m_rightSlave = new WPI_TalonFX(DriveConstants.kRightSlave);
+    m_frontLeft = new WPI_TalonFX(DriveConstants.kFrontLeftId);
+    m_frontRight = new WPI_TalonFX(DriveConstants.kFrontRightId);
+    m_backLeft = new WPI_TalonFX(DriveConstants.kBackLeftId);
+    m_backRight = new WPI_TalonFX(DriveConstants.kBackRightId);
 
-    m_leftSlave.follow(m_leftMaster);
-    m_rightSlave.follow(m_rightMaster);
+    m_backLeft.follow(m_frontLeft);
+    m_frontLeft.follow(m_frontRight);
 
-    m_rightMaster.setInverted(InvertType.InvertMotorOutput);
-    m_rightSlave.setInverted(InvertType.FollowMaster);
+    m_frontRight.setInverted(InvertType.InvertMotorOutput);
+    m_backRight.setInverted(InvertType.FollowMaster);
 
-    m_leftMaster.setNeutralMode(NeutralMode.Brake);
-    m_rightMaster.setNeutralMode(NeutralMode.Brake);
-    m_leftSlave.setNeutralMode(NeutralMode.Brake);
-    m_rightSlave.setNeutralMode(NeutralMode.Brake);
+    m_frontLeft.setNeutralMode(NeutralMode.Brake);
+    m_frontRight.setNeutralMode(NeutralMode.Brake);
+    m_backLeft.setNeutralMode(NeutralMode.Brake);
+    m_backRight.setNeutralMode(NeutralMode.Brake);
 
-    m_gyro = new AHRS();
+    m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(0));
+    m_robotPose = () -> m_odometry.getPoseMeters();
+
+    m_drive = new DifferentialDrive(m_frontLeft, m_frontRight);
+
+    m_gyro = new AHRS(SPI.Port.kMXP);
+  }
+
+  public Pose2d getPose() {
+    return m_robotPose.get();
   }
 
   public void setSpeed(double leftOutput, double rightOutput) {
-    m_leftMaster.setVoltage(leftOutput);
-    m_rightMaster.setVoltage(rightOutput);
+    m_frontLeft.setVoltage(leftOutput);
+    m_frontRight.setVoltage(rightOutput);
   }
 
   public void stopMotors() {
-    m_leftMaster.set(0);
-    m_rightMaster.set(0);
+    m_frontLeft.set(0);
+    m_frontRight.set(0);
+    m_backLeft.set(0);
+    m_backRight.set(0);
+  }
+
+  public void drive(double throttle, double angle) {
+    m_drive.arcadeDrive(throttle, angle);
+  }
+
+  public double getAngle() {
+    return -m_gyro.getAngle();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Left Master", m_leftMaster.getBusVoltage());
+    m_odometry.update(Rotation2d.fromDegrees(
+      getAngle()), 
+      falconTicksToMeters(m_frontLeft.getSelectedSensorPosition(), m_backLeft.getSelectedSensorPosition()), 
+      falconTicksToMeters(m_frontRight.getSelectedSensorPosition(), m_backRight.getSelectedSensorPosition()));
+  }
+
+  private double falconTicksToMeters(double frontTicks, double backTicks) {
+    return (((frontTicks + backTicks) / 2) / 2048) * 0.4788;
   }
 }
