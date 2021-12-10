@@ -14,10 +14,10 @@ package frc.robot;
  */
 public final class Constants {
     public static class DriveConstants {
-        public static final int kFrontLeftId = 3;
-        public static final int kFrontRightId = 1;
-        public static final int kBackLeftId = 2;
-        public static final int kBackRightId = 0;
+        public static final int kFrontLeftId = 0;
+        public static final int kFrontRightId = 7;
+        public static final int kBackLeftId = 1;
+        public static final int kBackRightId = 3;
 
         public static final double kWheelDiameterMeters = 0.1524;
         public static final double kGearRatio = 10.75;

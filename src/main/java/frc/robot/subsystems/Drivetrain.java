@@ -39,8 +39,8 @@ public class Drivetrain extends SubsystemBase {
     m_backLeft.follow(m_frontLeft);
     m_frontLeft.follow(m_frontRight);
 
-    m_frontRight.setInverted(InvertType.InvertMotorOutput);
-    m_backRight.setInverted(InvertType.FollowMaster);
+    // m_frontRight.setInverted(InvertType.InvertMotorOutput);
+    // m_backRight.setInverted(InvertType.FollowMaster);
 
     m_frontLeft.setNeutralMode(NeutralMode.Brake);
     m_frontRight.setNeutralMode(NeutralMode.Brake);
