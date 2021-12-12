@@ -7,9 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DrivetrainCommand;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.auto.TrajectoryFollower;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.utils.Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -20,11 +19,8 @@ import edu.wpi.first.wpilibj2.command.Command;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   public static Controller controller = new Controller(0);
 
-  // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   private Drivetrain m_drive;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -55,8 +51,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    // return m_autoCommand;
-    return new DrivetrainCommand(m_drive);
+    // return new DrivetrainCommand(m_drive);
+    // return TrajectoryFollower.getRamseteCommand("straight", m_drive);
+    return null;
   }
 }

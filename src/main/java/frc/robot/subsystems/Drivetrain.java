@@ -6,17 +6,20 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -25,10 +28,11 @@ public class Drivetrain extends SubsystemBase {
   private AHRS m_gyro;
 
   private DifferentialDriveOdometry m_odometry;
+  private DifferentialDrive m_drive;
+
+  private DifferentialDrivetrainSim m_driveSim;
 
   Supplier<Pose2d> m_robotPose;
-
-  private DifferentialDrive m_drive;
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     m_frontLeft = new WPI_TalonFX(DriveConstants.kFrontLeftId);
@@ -36,11 +40,11 @@ public class Drivetrain extends SubsystemBase {
     m_backLeft = new WPI_TalonFX(DriveConstants.kBackLeftId);
     m_backRight = new WPI_TalonFX(DriveConstants.kBackRightId);
 
-    m_backLeft.follow(m_frontLeft);
-    m_frontLeft.follow(m_frontRight);
+    // m_backLeft.follow(m_frontLeft);
+    // m_backRight.follow(m_frontRight);
 
-    // m_frontRight.setInverted(InvertType.InvertMotorOutput);
-    // m_backRight.setInverted(InvertType.FollowMaster);
+    SpeedControllerGroup left = new SpeedControllerGroup(m_frontLeft, m_backLeft);
+    SpeedControllerGroup right = new SpeedControllerGroup(m_frontRight, m_backRight);
 
     m_frontLeft.setNeutralMode(NeutralMode.Brake);
     m_frontRight.setNeutralMode(NeutralMode.Brake);
@@ -50,7 +54,7 @@ public class Drivetrain extends SubsystemBase {
     m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(0));
     m_robotPose = () -> m_odometry.getPoseMeters();
 
-    m_drive = new DifferentialDrive(m_frontLeft, m_frontRight);
+    m_drive = new DifferentialDrive(left, right);
 
     m_gyro = new AHRS(SPI.Port.kMXP);
   }
@@ -59,9 +63,10 @@ public class Drivetrain extends SubsystemBase {
     return m_robotPose.get();
   }
 
-  public void setSpeed(double leftOutput, double rightOutput) {
-    m_frontLeft.setVoltage(leftOutput);
-    m_frontRight.setVoltage(rightOutput);
+  public void tankDriveVoltage(double leftVolts, double rightVolts) {
+    m_frontLeft.setVoltage(leftVolts);
+    m_frontRight.setVoltage(-rightVolts);
+    m_drive.feed();
   }
 
   public void stopMotors() {
@@ -79,15 +84,27 @@ public class Drivetrain extends SubsystemBase {
     return -m_gyro.getAngle();
   }
 
-  @Override
-  public void periodic() {
-    m_odometry.update(Rotation2d.fromDegrees(
-      getAngle()), 
-      falconTicksToMeters(m_frontLeft.getSelectedSensorPosition(), m_backLeft.getSelectedSensorPosition()), 
-      falconTicksToMeters(m_frontRight.getSelectedSensorPosition(), m_backRight.getSelectedSensorPosition()));
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(
+      (m_frontLeft.getSelectedSensorVelocity() + m_backLeft.getSelectedSensorVelocity()) / 2,
+      (m_frontRight.getSelectedSensorVelocity() + m_backRight.getSelectedSensorVelocity()) / 2);
   }
 
   private double falconTicksToMeters(double frontTicks, double backTicks) {
     return (((frontTicks + backTicks) / 2) / 2048) * 0.4788;
+  }
+
+  @Override
+  public void periodic() {
+    m_odometry.update(
+      Rotation2d.fromDegrees(getAngle()), 
+      falconTicksToMeters(m_frontLeft.getSelectedSensorPosition(), m_backLeft.getSelectedSensorPosition()), 
+      falconTicksToMeters(m_frontRight.getSelectedSensorPosition(), m_backRight.getSelectedSensorPosition()));
+
+    SmartDashboard.putNumber("FL Volts", m_frontLeft.getBusVoltage());
+    SmartDashboard.putNumber("FR Volts", m_frontRight.getBusVoltage());
+    SmartDashboard.putNumber("BL Volts", m_backLeft.getBusVoltage());
+    SmartDashboard.putNumber("BR Volts", m_backRight.getBusVoltage());
+
   }
 }

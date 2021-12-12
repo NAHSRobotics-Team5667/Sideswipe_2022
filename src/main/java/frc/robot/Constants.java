@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -14,13 +19,17 @@ package frc.robot;
  */
 public final class Constants {
     public static class DriveConstants {
-        public static final int kFrontLeftId = 0;
-        public static final int kFrontRightId = 7;
-        public static final int kBackLeftId = 1;
-        public static final int kBackRightId = 3;
+        public static final int kFrontLeftId = 3;
+        public static final int kFrontRightId = 0;
+        public static final int kBackLeftId = 7;
+        public static final int kBackRightId = 4;
 
         public static final double kWheelDiameterMeters = 0.1524;
-        public static final double kGearRatio = 10.75;
+        public static final double kGearRatio = 10.71;
+
+        
+        public static final double kTrackWidthMeters = 0.6; // TODO: placeholder (Track Width)
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidthMeters);
     }
 
     public final static class ControllerConstants {
@@ -52,5 +61,28 @@ public final class Constants {
         // Special buttons
         public static final int BUTTON_MENU_PORT = 8; // Menu Button
         public static final int BUTTON_START_PORT = 7; // Start button
+    }
+
+    public static final class AutoConstants {
+        public static final double kRamseteB = 2;
+        public static final double kRamseteZeta = 0.7;
+
+        public static final double ksVolts = 1; // TODO: Placeholder (kS)
+        public static final double kvVoltSecondsPerMeter = 2; // TODO: PLACEHOLDER (kV)
+        public static final double kaVoltSecondsSquaredPerMeter = 0.2; // TODO: PLACEHOLDER (kA)
+        public static final double kPDriveVel = 10; // TODO: placeholder (kP)
+
+        public static final double kMaxSpeedMetersPerSecond = 2.5;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
+
+        public static Trajectory getTrajectory(String path) {
+            try {
+                return TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve("/home/lvuser/deploy/output/" + path + ".wpilib.json"));
+            } catch (Exception e) {
+                System.out.println("[ERROR] Something bad happened. You bloody idiot");
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 }
