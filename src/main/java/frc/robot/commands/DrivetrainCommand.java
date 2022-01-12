@@ -30,6 +30,8 @@ public class DrivetrainCommand extends CommandBase {
   public void execute() {
     Map<String, Double> sticks = RobotContainer.getController().getSticks();
     m_drive.drive(sticks.get("LSY"), sticks.get("RSX"));
+
+    if (RobotContainer.getController().getBButtonPressed()) m_drive.resetEncoders();
   }
 
   // Called once the command ends or is interrupted.

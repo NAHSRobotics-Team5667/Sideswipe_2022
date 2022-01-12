@@ -52,7 +52,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return new DrivetrainCommand(m_drive);
-    // return TrajectoryFollower.getRamseteCommand("straight", m_drive);
-    return null;
+    m_drive.resetEncoders();
+    m_drive.resetAngle();
+    return TrajectoryFollower.getRamseteCommand(Constants.AutoConstants.SPLINE, m_drive);
+    // return null;
   }
 }

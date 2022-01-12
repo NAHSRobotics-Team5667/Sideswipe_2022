@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -20,7 +21,9 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
@@ -32,7 +35,8 @@ public class Drivetrain extends SubsystemBase {
 
   private DifferentialDrivetrainSim m_driveSim;
 
-  Supplier<Pose2d> m_robotPose;
+  private SpeedControllerGroup left;
+  private SpeedControllerGroup right;
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     m_frontLeft = new WPI_TalonFX(DriveConstants.kFrontLeftId);
@@ -43,16 +47,20 @@ public class Drivetrain extends SubsystemBase {
     // m_backLeft.follow(m_frontLeft);
     // m_backRight.follow(m_frontRight);
 
-    SpeedControllerGroup left = new SpeedControllerGroup(m_frontLeft, m_backLeft);
-    SpeedControllerGroup right = new SpeedControllerGroup(m_frontRight, m_backRight);
-
     m_frontLeft.setNeutralMode(NeutralMode.Brake);
     m_frontRight.setNeutralMode(NeutralMode.Brake);
     m_backLeft.setNeutralMode(NeutralMode.Brake);
     m_backRight.setNeutralMode(NeutralMode.Brake);
 
+    m_frontLeft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    m_frontRight.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    m_backLeft.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    m_backRight.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+
     m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(0));
-    m_robotPose = () -> m_odometry.getPoseMeters();
+
+    left = new SpeedControllerGroup(m_frontLeft, m_backLeft);
+    right = new SpeedControllerGroup(m_frontRight, m_backRight);
 
     m_drive = new DifferentialDrive(left, right);
 
@@ -60,13 +68,30 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return m_robotPose.get();
+    return m_odometry.getPoseMeters();
   }
 
   public void tankDriveVoltage(double leftVolts, double rightVolts) {
-    m_frontLeft.setVoltage(leftVolts);
-    m_frontRight.setVoltage(-rightVolts);
+    left.setVoltage(leftVolts);
+    right.setVoltage(-rightVolts);
     m_drive.feed();
+  }
+
+  public void resetEncoders() {
+    m_frontLeft.setSelectedSensorPosition(0);
+    m_frontRight.setSelectedSensorPosition(0);
+    m_backLeft.setSelectedSensorPosition(0);
+    m_backRight.setSelectedSensorPosition(0);
+  }
+
+  public void resetAngle() {
+    m_gyro.reset();
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    m_gyro.reset();
+    m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getAngle()));
   }
 
   public void stopMotors() {
@@ -86,25 +111,39 @@ public class Drivetrain extends SubsystemBase {
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
-      (m_frontLeft.getSelectedSensorVelocity() + m_backLeft.getSelectedSensorVelocity()) / 2,
-      (m_frontRight.getSelectedSensorVelocity() + m_backRight.getSelectedSensorVelocity()) / 2);
+      falconTicksToMeters((m_frontLeft.getSelectedSensorVelocity() + m_backLeft.getSelectedSensorVelocity()) / 2),
+      falconTicksToMeters((m_frontRight.getSelectedSensorVelocity() + m_backRight.getSelectedSensorVelocity()) / 2)
+    );
   }
 
-  private double falconTicksToMeters(double frontTicks, double backTicks) {
-    return (((frontTicks + backTicks) / 2) / 2048) * 0.4788;
+  private double falconTicksToMeters(double ticks) {
+    return (ticks / (2048 * Constants.DriveConstants.kGearRatio)) * Constants.DriveConstants.kWheelDiameterMeters * Math.PI;
   }
 
   @Override
   public void periodic() {
     m_odometry.update(
       Rotation2d.fromDegrees(getAngle()), 
-      falconTicksToMeters(m_frontLeft.getSelectedSensorPosition(), m_backLeft.getSelectedSensorPosition()), 
-      falconTicksToMeters(m_frontRight.getSelectedSensorPosition(), m_backRight.getSelectedSensorPosition()));
+      falconTicksToMeters(m_frontLeft.getSelectedSensorPosition(0)), 
+      falconTicksToMeters(-m_frontRight.getSelectedSensorPosition(0)));
 
     SmartDashboard.putNumber("FL Volts", m_frontLeft.getBusVoltage());
     SmartDashboard.putNumber("FR Volts", m_frontRight.getBusVoltage());
     SmartDashboard.putNumber("BL Volts", m_backLeft.getBusVoltage());
     SmartDashboard.putNumber("BR Volts", m_backRight.getBusVoltage());
 
+    SmartDashboard.putNumber("front left", m_frontLeft.getSelectedSensorPosition());
+    SmartDashboard.putNumber("back left", m_backLeft.getSelectedSensorPosition());
+    SmartDashboard.putNumber("front right", m_frontRight.getSelectedSensorPosition());
+    SmartDashboard.putNumber("back right", m_backRight.getSelectedSensorPosition());
+    
+    SmartDashboard.putNumber("front left dist", falconTicksToMeters(m_frontLeft.getSelectedSensorPosition()));
+    SmartDashboard.putNumber("back left dist", falconTicksToMeters(m_backLeft.getSelectedSensorPosition()));
+    SmartDashboard.putNumber("front right dist", falconTicksToMeters(-m_frontRight.getSelectedSensorPosition()));
+    SmartDashboard.putNumber("back right dist", falconTicksToMeters(-m_backRight.getSelectedSensorPosition()));
+
+    SmartDashboard.putNumber("X", m_odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("Y", m_odometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("Angle", getAngle());
   }
 }
