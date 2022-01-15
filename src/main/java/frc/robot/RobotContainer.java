@@ -7,8 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DrivetrainCommand;
+import frc.robot.commands.WaterTurretCommand;
 import frc.robot.commands.auto.TrajectoryFollower;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.PneumaticWaterTurret;
 import frc.robot.utils.Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -22,15 +24,19 @@ public class RobotContainer {
   public static Controller controller = new Controller(0);
 
   private Drivetrain m_drive;
+  private PneumaticWaterTurret m_waterTurret;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     m_drive = new Drivetrain();
+    // m_waterTurret = new PneumaticWaterTurret();
 
     configureButtonBindings();
     
     m_drive.setDefaultCommand(new DrivetrainCommand(m_drive));
+    // m_waterTurret.setDefaultCommand(new WaterTurretCommand());
+    // m_waterTurret.setDefaultCommand(new WaterTurretCommand(1));
   }
 
   /**
@@ -55,6 +61,5 @@ public class RobotContainer {
     m_drive.resetEncoders();
     m_drive.resetAngle();
     return TrajectoryFollower.getRamseteCommand(Constants.AutoConstants.SPLINE, m_drive);
-    // return null;
   }
 }
