@@ -29,6 +29,10 @@ import edu.wpi.first.wpilibj.util.Units;
 public final class Constants {
     public static final int kWaterWheelId = -500; // port for water wheel motor
 
+    public final static class IntakeConstants {
+        public static final int kIntakeId = 5;
+    }
+
     public final static class DriveConstants {
         public static final int kFrontLeftId = 3;
         public static final int kFrontRightId = 0;
