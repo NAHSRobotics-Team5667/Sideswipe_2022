@@ -32,6 +32,9 @@ public final class Constants {
     public final static class IntakeConstants {
         public static final int kIntakeId = 5;
     }
+    public final static class IndexConstants {
+        public static final int kIndexId = 2;
+    }
 
     public final static class DriveConstants {
         public static final int kFrontLeftId = 3;
