@@ -10,11 +10,13 @@ import frc.robot.commands.DrivetrainCommand;
 import frc.robot.commands.IndexCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.WaterTurretCommand;
+import frc.robot.commands.shootercommandments;
 import frc.robot.commands.auto.TrajectoryFollower;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PneumaticWaterTurret;
+import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.utils.Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -31,6 +33,7 @@ public class RobotContainer {
   private PneumaticWaterTurret m_waterTurret;
   private IntakeSubsystem intake;
   private IndexSubsystem index;
+  private TurretSubsystem turret;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -39,12 +42,13 @@ public class RobotContainer {
     // m_waterTurret = new PneumaticWaterTurret();
     intake = new IntakeSubsystem();
     index = new IndexSubsystem();
-
+    turret = new TurretSubsystem();
     configureButtonBindings();
     
     m_drive.setDefaultCommand(new DrivetrainCommand(m_drive));
     intake.setDefaultCommand(new IntakeCommand(intake));
     index.setDefaultCommand(new IndexCommand(index));
+    turret.setDefaultCommand(new shootercommandments(turret));
     // m_waterTurret.setDefaultCommand(new WaterTurretCommand());
     // m_waterTurret.setDefaultCommand(new WaterTurretCommand(1));
   }

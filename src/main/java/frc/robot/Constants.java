@@ -81,6 +81,12 @@ public final class Constants {
         public static final int BUTTON_START_PORT = 7; // Start button
     }
 
+    public static final class ShooterConstants {
+        public static final double HOOD_GEAR_RATIO = 1 / 37.7777777777777777777777777777;
+        public static final double TURRET_GEAR_RATIO = 1 / 53.3333333333333333333333333333;
+        public static final int kTurretId = 8;
+    }
+
     public static final class AutoConstants {
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;

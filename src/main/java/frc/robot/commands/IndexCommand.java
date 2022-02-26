@@ -26,7 +26,7 @@ public class IndexCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    index.set(RobotContainer.getController().getRightTrigger()/2);
+    index.set(-0.2);
   }
   // Called once the command ends or is interrupted.
   @Override
