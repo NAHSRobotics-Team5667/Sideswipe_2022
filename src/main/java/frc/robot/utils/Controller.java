@@ -143,5 +143,12 @@ public class Controller extends XboxController {
     public boolean getLeftBumperPressed() {
         return super.getBumperPressed(getLeftHand());
     }
+    
+    public boolean getLeftBumper() {
+        return super.getBumper(getLeftHand());
+    }
 
+    public boolean getRightBumper() {
+        return super.getBumper(getRightHand());
+    }
 }
