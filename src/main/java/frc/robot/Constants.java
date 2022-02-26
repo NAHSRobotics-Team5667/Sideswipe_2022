@@ -35,6 +35,12 @@ public final class Constants {
     public final static class IndexConstants {
         public static final int kIndexId = 2;
     }
+    public final static class ShooterConstants {
+        public static final int kShooterId = 6;
+        public static final int kTurretID = 8;
+        public static final double HOOD_GEAR_RATIO = 1 / 37.77777777777777777777777777;
+        public static final double TURRET_GEAR_RATIO = 1 / 53.333333333333333333333333;
+    }
 
     public final static class DriveConstants {
         public static final int kFrontLeftId = 3;
