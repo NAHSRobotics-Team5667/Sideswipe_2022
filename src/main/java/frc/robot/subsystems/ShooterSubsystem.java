@@ -14,6 +14,9 @@ import frc.robot.Constants;
 
 import static frc.robot.Constants.ShooterConstants.TURRET_GEAR_RATIO;
 
+/**
+ * The subsystem for the shooter
+ */
 public class ShooterSubsystem extends SubsystemBase {
     private WPI_TalonFX m_ShooterMotor;
     private WPI_TalonFX m_TurretMotor;
@@ -32,14 +35,30 @@ public class ShooterSubsystem extends SubsystemBase {
         updateTurretAngle();
     }
 
+
+    /**
+     * Updates {@link #turretAngle} to the angle, in degrees, of the rotation of the turret.
+     */
     public void updateTurretAngle() {
         turretAngle = (m_TurretMotor.getSelectedSensorPosition() * TURRET_GEAR_RATIO * 360) / 2048;
     }
 
+
+    /**
+     * @return {@link #turretAngle} - the Angle in degrees of the rotation of the turret.
+     * Should be between -90 and 90.
+     */
     public double getTurretAngle() {
         return turretAngle;
     }
 
+
+    /**
+     * Sets the rotation percent of the Turret motor.
+     * Will not set the speed if the rotation will make the angle exceed 90 degrees.
+     *
+     * @param percentOutput percent, from -1, to 1, to set the turret speed.
+     */
     public void setTurretSpeed(double percentOutput) {
         updateTurretAngle();
         if ((turretAngle < 90 || percentOutput <= 0) && (turretAngle > -90 || percentOutput >= 0)) {
@@ -47,16 +66,11 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
 
-    /*public void setTurretTargetAngle(double angle){
-        turretTargetAngle = angle;
-    }*/
+
     @Override
     public void periodic() {
         updateTurretAngle();
         SmartDashboard.putNumber("turretAngle", turretAngle);
-        /*if ((turretAngle >= 90 && m_TurretMotor.get() > 0) || (turretAngle <= -90 && m_TurretMotor.get() < 0)) {
-            m_TurretMotor.set(0);
-        }*/
 
 
         // This method will be called once per scheduler run
