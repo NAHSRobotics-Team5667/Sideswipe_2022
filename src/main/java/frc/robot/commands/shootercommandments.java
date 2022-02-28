@@ -28,18 +28,21 @@ public class shootercommandments extends CommandBase {
   @Override
   public void execute() {
     if(turret.turretAngle()>=90){
+      turret.set(0);
       if(RobotContainer.getController().getLeftBumper()){
-        turret.set(0.1);
-      }
-    }else if(turret.turretAngle()<=-90){
-      if(RobotContainer.getController().getRightBumper()){
         turret.set(-0.1);
+      }
+      
+    }else if(turret.turretAngle()<=-90){
+      turret.set(0);
+      if(RobotContainer.getController().getRightBumper()){
+        turret.set(0.1);
       }
     }else{
       if(RobotContainer.getController().getLeftBumper()){
-        turret.set(0.1);
-      }else if(RobotContainer.getController().getRightBumper()){
         turret.set(-0.1);
+      }else if(RobotContainer.getController().getRightBumper()){
+        turret.set(0.1);
       }else{
         turret.set(0);
       }
