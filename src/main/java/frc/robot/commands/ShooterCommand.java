@@ -18,7 +18,7 @@ public class ShooterCommand extends CommandBase {
     @Override
     public void initialize() {
     shooter.setTurretSpeed(0);
-
+    shooter.setShooterSpeed(0);
     }
 
     @Override
@@ -36,7 +36,8 @@ public class ShooterCommand extends CommandBase {
         SmartDashboard.putBoolean("Right bumper", rightBumper);
         SmartDashboard.putBoolean("Left bumper", leftBumper);
 
-
+        double rightTrigger = RobotContainer.controller.getRightTrigger();
+        shooter.setShooterSpeed(rightTrigger);
     }
 
     @Override
@@ -48,6 +49,7 @@ public class ShooterCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         shooter.setTurretSpeed(0);
+        shooter.setShooterSpeed(0);
     }
 
 }

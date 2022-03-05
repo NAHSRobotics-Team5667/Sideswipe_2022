@@ -22,7 +22,7 @@ public class IndexSubsystem extends SubsystemBase {
   }
   
   public void set(double percentOutput){
-    m_IndexMotor.set(ControlMode.PercentOutput, percentOutput);
+    m_IndexMotor.set(ControlMode.PercentOutput, .12);
   }
   
   @Override

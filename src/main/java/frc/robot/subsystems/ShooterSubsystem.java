@@ -21,7 +21,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private WPI_TalonFX m_ShooterMotor;
     private WPI_TalonFX m_TurretMotor;
     private double turretAngle = 0;
-
+    private double shooterSpeed = 0;
     /**
      * Creates a new ShooterSubsystem.
      */
@@ -31,6 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_TurretMotor.setSelectedSensorPosition(0);
         m_ShooterMotor.setNeutralMode(NeutralMode.Brake);
         m_TurretMotor.setNeutralMode(NeutralMode.Brake);
+
 
         updateTurretAngle();
     }
@@ -65,12 +66,16 @@ public class ShooterSubsystem extends SubsystemBase {
             m_TurretMotor.set(ControlMode.PercentOutput, percentOutput);
         }
     }
+    public void setShooterSpeed(double percentOutput) {
+        m_ShooterMotor.set(ControlMode.PercentOutput, percentOutput);
+    }
 
 
     @Override
     public void periodic() {
         updateTurretAngle();
         SmartDashboard.putNumber("turretAngle", turretAngle);
+        SmartDashboard.putNumber("Shooter Speed", shooterSpeed);
 
 
         // This method will be called once per scheduler run

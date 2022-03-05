@@ -26,7 +26,7 @@ public class IntakeCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.set(RobotContainer.getController().getRightTrigger()/2);
+    intake.set(.12);
   }
 
   // Called once the command ends or is interrupted.
