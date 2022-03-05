@@ -37,7 +37,12 @@ public class ShooterCommand extends CommandBase {
         SmartDashboard.putBoolean("Left bumper", leftBumper);
 
         double rightTrigger = RobotContainer.controller.getRightTrigger();
-        shooter.setShooterSpeed(rightTrigger);
+        shooter.setLiftSpeed(rightTrigger);
+        if (rightTrigger>0.2){
+            shooter.setShooterSpeed(.95);
+        }else{
+            shooter.setShooterSpeed(0);
+        }
     }
 
     @Override

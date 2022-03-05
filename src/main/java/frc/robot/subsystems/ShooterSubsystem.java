@@ -20,18 +20,23 @@ import static frc.robot.Constants.ShooterConstants.TURRET_GEAR_RATIO;
 public class ShooterSubsystem extends SubsystemBase {
     private WPI_TalonFX m_ShooterMotor;
     private WPI_TalonFX m_TurretMotor;
+    private WPI_TalonFX m_LiftMotor;
     private double turretAngle = 0;
     private double shooterSpeed = 0;
+
     /**
      * Creates a new ShooterSubsystem.
      */
     public ShooterSubsystem() {
         m_ShooterMotor = new WPI_TalonFX(Constants.ShooterConstants.kShooterId);
-        m_TurretMotor = new WPI_TalonFX(Constants.ShooterConstants.kTurretID);
+        m_TurretMotor = new WPI_TalonFX(Constants.ShooterConstants.kTurretId);
+        m_LiftMotor = new WPI_TalonFX(Constants.ShooterConstants.kLiftId);
         m_TurretMotor.setSelectedSensorPosition(0);
         m_ShooterMotor.setNeutralMode(NeutralMode.Brake);
         m_TurretMotor.setNeutralMode(NeutralMode.Brake);
-
+        m_LiftMotor.setNeutralMode(NeutralMode.Brake);
+        m_LiftMotor.setInverted(true);
+        m_ShooterMotor.setInverted(true);
 
         updateTurretAngle();
     }
@@ -66,8 +71,13 @@ public class ShooterSubsystem extends SubsystemBase {
             m_TurretMotor.set(ControlMode.PercentOutput, percentOutput);
         }
     }
+
     public void setShooterSpeed(double percentOutput) {
         m_ShooterMotor.set(ControlMode.PercentOutput, percentOutput);
+    }
+
+    public void setLiftSpeed(double percentOutput) {
+        m_LiftMotor.set(ControlMode.PercentOutput, percentOutput);
     }
 
 

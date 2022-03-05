@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+
 import java.util.List;
 
 import edu.wpi.first.wpilibj.Filesystem;
@@ -32,14 +33,17 @@ public final class Constants {
     public final static class IntakeConstants {
         public static final int kIntakeId = 5;
     }
+
     public final static class IndexConstants {
         public static final int kIndexId = 2;
     }
+
     public final static class ShooterConstants {
         public static final int kShooterId = 6;
-        public static final int kTurretID = 8;
+        public static final int kTurretId = 8;
         public static final double HOOD_GEAR_RATIO = 1 / 37.77777777777777777777777777;
         public static final double TURRET_GEAR_RATIO = 1 / 53.333333333333333333333333;
+        public static final int kLiftId = 1;
     }
 
     public final static class DriveConstants {
@@ -51,7 +55,7 @@ public final class Constants {
         public static final double kWheelDiameterMeters = Units.inchesToMeters(6);
         public static final double kGearRatio = 10.71;
 
-        
+
         public static final double kTrackWidthMeters = 1.178496599;
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidthMeters);
     }
@@ -101,27 +105,27 @@ public final class Constants {
 
         public static final double voltConstraint = 8;
         public static final DifferentialDriveVoltageConstraint voltageConstraint = new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(ksVolts, kvVoltSecondsPerMeter, kaVoltSecondsSquaredPerMeter), 
-            Constants.DriveConstants.kDriveKinematics, 
-            voltConstraint);
+                new SimpleMotorFeedforward(ksVolts, kvVoltSecondsPerMeter, kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics,
+                voltConstraint);
 
         public static final TrajectoryConfig config = new TrajectoryConfig(
-            kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared)
-            .setKinematics(DriveConstants.kDriveKinematics)
-            .addConstraint(voltageConstraint);
+                kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared)
+                .setKinematics(DriveConstants.kDriveKinematics)
+                .addConstraint(voltageConstraint);
 
         public static final Trajectory STRAIGHT = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0, 0, new Rotation2d(0)),
-            List.of(new Translation2d(1, 0), new Translation2d(2, 0)),
-            new Pose2d(3, 0, new Rotation2d(0)),
-            config
+                new Pose2d(0, 0, new Rotation2d(0)),
+                List.of(new Translation2d(1, 0), new Translation2d(2, 0)),
+                new Pose2d(3, 0, new Rotation2d(0)),
+                config
         );
 
         public static final Trajectory SPLINE = TrajectoryGenerator.generateTrajectory(
-            List.of(
-                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-                new Pose2d(3, 3, Rotation2d.fromDegrees(0))),
-            config
+                List.of(
+                        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                        new Pose2d(3, 3, Rotation2d.fromDegrees(0))),
+                config
         );
 
         public static Trajectory getTrajectory(String path) {
